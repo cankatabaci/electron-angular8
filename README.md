@@ -1,27 +1,60 @@
-# ElectronAngular8
+# Electron and Angular 8
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.2.1.
+Basic native desktop app with Electron and Angular 8
 
-## Development server
+- Angular CLI: v8.2.1
+- Node: v10.16.2
+- Angular: v8.2.1
+- Electron: v6.0.1
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## Usage
+```shell
+git clone https://github.com/cankatabaci/electron-angular8.git
+cd electron-angular8
+npm install
+npm run electron-build
+```
 
-## Code scaffolding
+## fine-tunings 
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+1- Fix Angular **src/index.html** (Add "." before slash) for electron
 
-## Build
+```html
+<base href="./">
+```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+2- Create **main.js** for electron. In the main.js, as a start page, you should use in dist/index.html
+```
+const url = require('url')
+const path = require('path')
 
-## Running unit tests
+win.loadURL(
+    url.format({
+      pathname: path.join(__dirname, "dist/index.html"),
+      protocol:"file:",
+      slashes: true
+    })
+  );
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+3- Edit **package.json**
+```
+"main": "main.js",
+"scripts": {
+    "electron": "electron .",
+    "electron-build": "ng build --prod && electron ."
+},
+```
 
-## Running end-to-end tests
+4- Edit **tsconfig.json** (edit _outDir_ and _target_)
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+I've solved the following error with the solution here
+> Failed to load module script: The server responded with a non-JavaScript MIME type of "". Strict MIME type checking is enforced for module scripts per HTML spec.
+```
+"target": "es5",
+```
 
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+5- Edit **angular.json** (Edit _outputPath_)
+```
+"outputPath": "dist",
+```
